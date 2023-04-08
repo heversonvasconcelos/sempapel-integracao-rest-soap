@@ -17,12 +17,12 @@ exports.post = async ({ body: { request } }, res) => {
         let siafemSoapResult = await siafemSoapClient.enviarSiafdocAoSiafem(request);
 
         res.status(200).send({
-            siafDoc: request.DocumentoXML,
-            resultado: siafem.validarRetornoMengemSiafem(siafemSoapResult)
+            Resultado: siafem.validarRetornoMengemSiafem(siafemSoapResult),
+            SIAFDOC: request.DocumentoXML
         });
 
     } catch (error) {
-        res.status(500).send({ ERRO: error.message });
+        res.status(500).send({ Erro: error.message,  SIAFDOC: request.DocumentoXML });
     }
 }
 
