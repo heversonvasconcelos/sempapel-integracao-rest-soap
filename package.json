@@ -4,7 +4,8 @@
   "description": "Projeto ExpressJS que fornece uma API REST para consumir webservice SOAP",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "develop": "nodemon ./bin/server.js"
   },
   "keywords": [
     "express",
@@ -17,8 +18,11 @@
     "body-parser": "^1.20.2",
     "cheerio": "^1.0.0-rc.12",
     "express": "^4.18.2",
-    "node-fetch": "^3.3.1",
-    "strong-soap": "^3.4.3",
-    "xml-js": "^1.6.11"
+    "json2xml": "^0.1.3",
+    "node-fetch": "^2.6.9",
+    "strong-soap": "^3.4.3"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22"
   }
 }

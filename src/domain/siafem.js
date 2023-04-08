@@ -1,6 +1,7 @@
 const json2xml = require('json2xml');
+const validator = require('../utils/validator');
 
-export function getSiafDocFormatado(codigoUnico, documentoXML) {
+function getSiafDocFormatado(codigoUnico, documentoXML) {
 
     let documento = documentoXML.Documento;
     documento.CodUnico = codigoUnico;
@@ -37,7 +38,7 @@ function getTagValueFromXmlDoc(doc, tagName) {
 
 function validarRetornoMengemSiafem(result) {
     const mensagemResult = result.MensagemResult;
-    if (isEmpty(mensagemResult)) {
+    if (validator.isEmpty(mensagemResult)) {
         throw new IntegracaoSiafemException('não retornou resposta');
     }
 
@@ -60,3 +61,5 @@ class IntegracaoSiafemException extends Error {
         super('Erro na integração com SIAFEM: ' + message);
     }
 }
+
+module.exports = { getSiafDocFormatado, validarRetornoMengemSiafem, IntegracaoSiafemException }

@@ -1,6 +1,6 @@
 
-
 const fetch = require('node-fetch');
+const { SigaException } = require('../domain/siga');
 
 const sigaExApiBaseUrl = 'https://www.documentos.homologacao.spsempapel.sp.gov.br/sigaex/api/v1/';
 const idTipoSequenciaSiga = 2;
@@ -25,7 +25,8 @@ exports.getCodigoUnico = async (token) => {
         return codigoUnico;
 
     } catch (error) {
-        throw new SigaException(`não foi possível gerar o código único. Request: ${codigoUnicoSigaAPIEndpointUrl}`);
+        throw new SigaException(`não foi possível gerar o código único. 
+            Request: ${codigoUnicoSigaAPIEndpointUrl}`);
     }
 }
 

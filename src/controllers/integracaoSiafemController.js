@@ -13,11 +13,12 @@ exports.post = async ({ body: { request } }, res) => {
         }
         siga.validaCodigoUnico(codigoUnico);
 
-        request.DocumentoXML = siafem.getSiafDocFormatado(request.DocumentoXML);
+        request.DocumentoXML = siafem.getSiafDocFormatado(codigoUnico, request.DocumentoXML);
+        let siafemSoapResult = await siafemSoapClient.enviarSiafdocAoSiafem(request);
 
         res.status(200).send({
             siafDoc: request.DocumentoXML,
-            resultado: siafem.validarRetornoMengemSiafem(result)
+            resultado: siafem.validarRetornoMengemSiafem(siafemSoapResult)
         });
 
     } catch (error) {

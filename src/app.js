@@ -1,10 +1,13 @@
 /** 
  * Ref.:
  * https://gist.github.com/Guatom/6d0ecbe1f7b28fe35ede06d3d1f4d4f4 
+ * https://medium.com/xp-inc/criando-uma-api-node-em-10-passos-com-express-js-52b2d612a8a9
  * https://github.com/programadriano/node-express
  * */
 
 const express = require('express');
+const bodyParser = require('body-parser');
+
 const app = express();
 
 //Route
