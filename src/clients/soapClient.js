@@ -7,7 +7,7 @@ const clientPromise = (wsdlUrl) => (
     ))
 );
 
-const invokeOperation = ({ client, operation, request }) => (
+const invokeOperation = (client, operation, request) => (
     new Promise((resolve, reject) => client[operation](request, (err, result) => (
         err ? reject(err) : resolve(result))
     ))
