@@ -5,6 +5,7 @@ const siafem = require('../domain/siafem');
 const validator = require('../utils/validator');
 
 exports.post = async ({ body: { request } }, res) => {
+    res.setHeader("Content-Type", "application/json");
     try {
         let codigoUnico = request.CodigoUnico;
         if (validator.isEmpty(codigoUnico)) {
@@ -16,13 +17,13 @@ exports.post = async ({ body: { request } }, res) => {
         request.DocumentoXML = siafem.getSiafDocFormatado(codigoUnico, request.DocumentoXML);
         let siafemSoapResult = await siafemSoapClient.enviarSiafdocAoSiafem(request);
 
-        res.status(200).send({
+        res.status(200).json({
             Resultado: siafem.validarRetornoMengemSiafem(siafemSoapResult),
             SIAFDOC: request.DocumentoXML
         });
 
     } catch (error) {
-        res.status(500).send({ Erro: error.message,  SIAFDOC: request.DocumentoXML });
+        res.status(500).json({ Erro: error.message,  SIAFDOC: request.DocumentoXML });
     }
 }
 

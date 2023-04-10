@@ -1,4 +1,5 @@
 const json2xml = require('json2xml');
+var cheerio = require('cheerio');
 const validator = require('../utils/validator');
 
 function getSiafDocFormatado(codigoUnico, documentoXML) {
@@ -32,27 +33,34 @@ function getSiafDocFormatado(codigoUnico, documentoXML) {
 
 }
 
-function getTagValueFromXmlDoc(doc, tagName) {
-    return doc.getElementsByTagName(tagName)[0].childNodes[0].nodeValue;
-}
-
 function validarRetornoMengemSiafem(result) {
     const mensagemResult = result.MensagemResult;
     if (validator.isEmpty(mensagemResult)) {
         throw new IntegracaoSiafemException('não retornou resposta');
     }
 
-    try {
-        const statusOperacaoXml = getTagValueFromXmlDoc(xmlDocDom, 'StatusOperacao');
-        const msgErroXml = getTagValueFromXmlDoc(xmlDocDom, 'MsgErro');
-        const msgRetornoXml = getTagValueFromXmlDoc(xmlDocDom, 'MsgRetorno');
-        const mensagemResultXml = getTagValueFromXmlDoc(xmlDocDom, 'MensagemResult');
-        const msgRetornoSemPapelXml = getTagValueFromXmlDoc(xmlDocDom, 'msgRetornoSemPapel');
+    const $ = cheerio.load(mensagemResult, { ignoreWhitespace: true, xmlMode: true });
+    const statusOperacaoXml = $('StatusOperacao').text();
+    const msgErroXml = $('MsgErro').text();
+    const msgRetornoXml = $('MsgRetorno').text();
+    const mensagemResultXml = $('MensagemResult').text();
+    const msgRetornoSemPapelXml = $('MsgRetornoSemPapel').text();
 
-        return result;
-    } catch (error) {
-        throw new IntegracaoSiafemException('formato da resposta do SIAFEM inválido ' + error);
+    if (validator.isEmpty(statusOperacaoXml)) {
+        if (validator.isEmpty(msgErroXml) &&
+            validator.isEmpty(msgRetornoXml) &&
+            validator.isEmpty(mensagemResultXml) &&
+            validator.isEmpty(msgRetornoSemPapelXml)) {
+            msgErroXml = result;
+        }
+        throw new IntegracaoSiafemException(`${msgErroXml} ${msgRetornoXml} ${mensagemResultXml} ${msgRetornoSemPapelXml}`);
     }
+    else if (statusOperacaoXml === 'false') {
+        throw new IntegracaoSiafemException(msgRetornoXml);
+    }
+
+
+    return result;
 
 }
 
