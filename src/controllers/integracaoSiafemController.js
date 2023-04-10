@@ -1,29 +1,37 @@
+const yup = require('yup');
+const { processoSiafemSchema } = require('../schemas/processoSiafemSchema');
+
 const sigaRestClient = require('../clients/sigaRestClient');
 const siafemSoapClient = require('../clients/siafemSoapClient');
 const siga = require('../domain/siga');
 const siafem = require('../domain/siafem');
-const validator = require('../utils/validator');
 
-exports.post = async ({ body: { request } }, res) => {
-    res.setHeader("Content-Type", "application/json");
+exports.post = async (request, response) => {
+    const { body } = request;
+
     try {
-        let codigoUnico = request.CodigoUnico;
-        if (validator.isEmpty(codigoUnico)) {
-            let sigaToken = request.sigaToken;
+        const data = processoSiafemSchema.validateSync(body, { abortEarly: false, stripUnknown: false });
+
+        let codigoUnico = body.DocumentoXML.Documento.CodUnico;
+        if (!codigoUnico) {
+            let sigaToken = body.sigaToken;
             codigoUnico = await sigaRestClient.getCodigoUnico(sigaToken);
         }
         siga.validaCodigoUnico(codigoUnico);
 
-        request.DocumentoXML = siafem.getSiafDocFormatado(codigoUnico, request.DocumentoXML);
-        let siafemSoapResult = await siafemSoapClient.enviarSiafdocAoSiafem(request);
+        body.DocumentoXML = siafem.getSiafDocFormatado(codigoUnico, body.DocumentoXML);
+        let siafemSoapResult = await siafemSoapClient.enviarSiafdocAoSiafem(body);
 
-        res.status(200).json({
+        response.status(200).json({
             Resultado: siafem.validarRetornoMengemSiafem(siafemSoapResult),
-            SIAFDOC: request.DocumentoXML
+            SIAFDOC: body.DocumentoXML
         });
 
     } catch (error) {
-        res.status(500).json({ Erro: error.message,  SIAFDOC: request.DocumentoXML });
+        if (error instanceof yup.ValidationError) {
+            return response.status(422).json({ Erro: error.errors });
+        }
+        response.status(500).json({ Erro: error.message, SIAFDOC: body.DocumentoXML });
     }
 }
 
