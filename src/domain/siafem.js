@@ -41,17 +41,17 @@ function validarRetornoMengemSiafem(result) {
 
     const $ = cheerio.load(mensagemResult, { ignoreWhitespace: true, xmlMode: true });
     const statusOperacaoXml = $('StatusOperacao').text();
-    const msgErroXml = $('MsgErro').text();
-    const msgRetornoXml = $('MsgRetorno').text();
-    const mensagemResultXml = $('MensagemResult').text();
-    const msgRetornoSemPapelXml = $('MsgRetornoSemPapel').text();
+    let msgErroXml = $('MsgErro').text();
+    let msgRetornoXml = $('MsgRetorno').text();
+    let mensagemResultXml = $('MensagemResult').text();
+    let msgRetornoSemPapelXml = $('MsgRetornoSemPapel').text();
 
     if (validator.isEmpty(statusOperacaoXml)) {
         if (validator.isEmpty(msgErroXml) &&
             validator.isEmpty(msgRetornoXml) &&
             validator.isEmpty(mensagemResultXml) &&
             validator.isEmpty(msgRetornoSemPapelXml)) {
-            msgErroXml = result;
+            msgErroXml = result.MensagemResult;
         }
         throw new IntegracaoSiafemException(`${msgErroXml} ${msgRetornoXml} ${mensagemResultXml} ${msgRetornoSemPapelXml}`);
     }

@@ -8,7 +8,7 @@ const processoSiafemSchema = yup.object({
     Usuario: yup.string().required(),
     Senha: yup.string().required(),
     AnoBase: yup.string().required(),
-    UnidadeGestora: yup.string().optional(),
+    UnidadeGestora: yup.string().default(''),
     DocumentoXML: yup.object({
         Documento: yup.object({
             UG: yup.string().optional(),

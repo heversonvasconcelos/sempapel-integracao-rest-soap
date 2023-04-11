@@ -7,11 +7,12 @@ const siga = require('../domain/siga');
 const siafem = require('../domain/siafem');
 
 exports.post = async (request, response) => {
-    const { body } = request;
+    let { body } = request;
 
     try {
         const data = processoSiafemSchema.validateSync(body, { abortEarly: false, stripUnknown: false });
-
+        body = data;
+        
         let codigoUnico = body.DocumentoXML.Documento.CodUnico;
         if (!codigoUnico) {
             let sigaToken = body.sigaToken;
@@ -38,33 +39,30 @@ exports.post = async (request, response) => {
 /**
  * Exemplo de chamada 
  * {
-    "request": {
-        "sigaToken": ""
-        "Usuario": "",
-        "Senha": "",
-        "AnoBase": "2023",
-        "UnidadeGestora": "010001",
-        "DocumentoXML": {
-            "Documento": {
-                "UG": "010001",
-                "Gestao": "00001",
-                "Processo": "",
-                "Desdobramento": "",
-                "CodUnico": "20230000072",
-                "CodSemPapel": "ZZPRC202300093",
-                "Objeto": "Compra de mobiliario",
-                "TipoLicitacao": "0",
-                "ID": "",
-                "DigitoID": "",
-                "ATA": "N",
-                "Convenio": "N",
-                "FlagPresencial": "",
-                "FlagEletronico": "",
-                "ObjetoConvenio": "",
-                "CNPJ": "37492763000107"
-            },
-            "Finalidade": "Compra de mobiliario"
-        }
+    "Usuario": "PSIAFEM2023",
+    "Senha": "13NOVEMBRO",
+    "AnoBase": "2023",
+    "UnidadeGestora": "010001",
+    "DocumentoXML": {
+        "Documento": {
+            "UG": "010001",
+            "Gestao": "00001",
+            "Processo": "",
+            "Desdobramento": "",
+            "CodUnico": "20230000072",
+            "CodSemPapel": "ZZPRC202300093",
+            "Objeto": "Compra de mobiliario",
+            "TipoLicitacao": "0",
+            "ID": "",
+            "DigitoID": "",
+            "ATA": "N",
+            "Convenio": "N",
+            "FlagPresencial": "",
+            "FlagEletronico": "",
+            "ObjetoConvenio": "",
+            "CNPJ": "37492763000107"
+        },
+        "Finalidade": "Compra de mobiliario"
     }
 }
  */
